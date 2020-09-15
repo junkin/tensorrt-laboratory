@@ -113,6 +113,7 @@ AudioTask::Step()
 
   // Transition to the sending completion if no more bytes to send
   if (bytes_to_send_ == 0) {
+    stream_future_ = stream_->Done();
     state_ = SENDING_COMPLETE;
   } else {
     double current_wait_time = 1000 * (bytes_to_send_ - header_size) /
