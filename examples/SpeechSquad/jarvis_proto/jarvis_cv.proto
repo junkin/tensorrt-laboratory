@@ -1,0 +1,414 @@
+syntax = "proto3";
+
+package nvidia.jarvis.vision;
+
+/*
+ * The Jarvis Vision service provides methods for obtaining inference results
+ * for various vision models.
+ */
+service JarvisVision {
+    /*
+     * Given a GazeRequest for Gaze inference, outputs a GazeResponse.
+     *
+     */
+    rpc GetGaze(GazeRequest) returns (GazeResponse);
+
+    /*
+     * Given a FaceDetectRequest for FaceDetect inference, outputs a
+     *        FaceDetectResponse.
+     *
+     */
+    rpc GetFaceDetect(FaceDetectRequest) returns (FaceDetectResponse);
+
+    /*
+     * Given a FacialLandmarksRequest for FacialLandmarks inference,
+     *        outputs a FacialLandmarksResponse.
+     *
+     */
+    rpc GetFacialLandmarks(FacialLandmarksRequest) returns (FacialLandmarksResponse);
+
+    /*
+     * Given a BodyPoseRequest for BodyPose inference,
+     *        outputs a BodyPoseResponse.
+     *
+     */
+     rpc GetBodyPose(BodyPoseRequest) returns (BodyPoseResponse);
+
+    /*
+     * Given a EmotionRequest for Emotion inference,
+     *        outputs a EmotionResponse.
+     *
+     */
+     rpc GetEmotion(EmotionRequest) returns (EmotionResponse);
+
+    /*
+     * Given a HeadPoseRequest for HeadPose inference,
+     *        outputs a HeadPoseResponse.
+     *
+     */
+    rpc GetHeadPose(HeadPoseRequest) returns (HeadPoseResponse);
+
+    /*
+     * Given a UserRequest for getting user data,
+     *        outputs a UserResponse.
+     *
+     */
+    rpc GetUserAttributes(UserRequest) returns (UserResponse);
+}
+
+/*
+ * Request for HeadPose inference needs image and camera parameters.
+ *        Optionally, provide imageID which will be returned in the response.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message HeadPoseRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // camera matrix
+    Data cam_matrix = 2;
+
+    // camera distortion coefficients
+    Data dist_coeffs = 3;
+
+    // Optionally provide imageID which will be mirrored in response
+    uint64 imageID = 4;
+}
+
+/*
+ * Response for HeadPose inference outputs points in 3D space.
+ */
+message HeadPoseResponse {
+    // A list of output tuples for the points in 3D space
+    repeated Head headposes = 1;
+
+    // ID from request
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for User inference needs image and point cloud.
+ *        Optionally, provide imageID which will be returned in the response.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message UserRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // camera matrix
+    Data cam_matrix = 2;
+
+    // camera distortion coefficients
+    Data dist_coeffs = 3;
+
+    // Optionally provide imageID which will be mirrored in response
+    uint64 imageID = 4;
+}
+
+/*
+ * Response for User objects.
+ */
+message UserResponse {
+    // A list of output tuples for the points in 3D space
+    repeated Users users = 1;
+
+    // ID from request
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for Emotion inference needs image.
+ *        Optionally, provide imageID which will be returned in the response.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message EmotionRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // Optionally provide imageID which will be mirrored in response
+    uint64 imageID = 2;
+}
+
+/*
+ * Response for Emotion inference outputs list of emotions for every
+ *        face detected.
+ */
+ message EmotionResponse {
+    // A list of output poses
+    repeated Emotion emotions = 1;
+
+    // ID from request
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for BodyPose inference needs image.
+ *        Optionally, provide imageID which will be returned in the response.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message BodyPoseRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // Optionally provide imageID which will be mirrored in response
+    uint64 imageID = 2;
+}
+
+/*
+ * Response for BodyPose inference outputs bounding boxes of faces.
+ */
+message BodyPoseResponse {
+    // A list of output poses
+    repeated BodyPose poses = 1;
+
+    // ID from request
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for FaceDetect inference needs image.
+ *        Optionally, provide imageID which will be returned in the response.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message FaceDetectRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // Optionally provide imageID which will be mirrored in response.
+    uint64 imageID = 2;
+}
+
+/*
+ * Response for FaceDetect inference outputs bounding boxes of faces.
+ */
+message FaceDetectResponse {
+    // A list of output face bounding boxes
+    repeated BoundingBox bbox = 1;
+
+    // ID from request.
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for FacialLandmarks inference needs image.
+ *        Optionally, provide imageID which will be returned in the response.
+ *        Optionally, user can provide face bounding boxes to run inference for
+ *        FacialLandmarks in specific regions.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message FacialLandmarksRequest {
+    // Input image frame
+    Data image = 1;
+
+    // Optionally provide imageID which will be mirrored in response.
+    uint64 imageID = 2;
+
+    // Optional input
+    repeated BoundingBox face_bbox = 3;
+}
+
+/*
+ * Response for FacialLandmarks inference outputs landmarks of (x,y)
+ *        coorindates for each face.
+ */
+message FacialLandmarksResponse {
+    // A list of output facial landmarks points
+    repeated Data landmarks = 1;
+
+    // ID from request.
+    uint64 imageID = 2;
+}
+
+/*
+ * Request for Gaze inference needs image.
+ *        Optionally, provide imageID which will be returned in the response.
+ *        Optionally, user can provide face bounding boxes to run inference for
+ *        Gaze in specific regions.
+ *        Optionally, user can provide landmarks of (x,y) coordinates for each
+ *        face to run inference for Gaze in specific regions.
+ *
+ * Image is expected in BGR format in HWC.
+ */
+ message GazeRequest {
+    //  Input image frame
+    Data image = 1;
+
+    // Optionally provide imageID which will be mirrored in response.
+    uint64 imageID = 2;
+
+    // Optional input
+    repeated BoundingBox face_bbox = 3;
+
+    // Optional input
+    repeated Data landmarks = 4;
+}
+
+/*
+ * Response for Gaze inference outputs Gazes for each person.
+ */
+message GazeResponse {
+    // A list of output gaze values
+    repeated Gaze gaze = 1;
+
+    // ID from request.
+    uint64 imageID = 2;
+}
+
+/*
+ * Generic data block that can hold images or tensors.
+ */
+ message Data {
+    // Buffer of bytes for data.
+    bytes buffer = 1;
+
+    // Shape of data used for deserialization.
+    repeated int32 shape = 2;
+
+    // Datatype of buffer for deserialization.
+    DataType dtype = 3;
+}
+
+/*
+ * Datatype specifications for data block. Default = 0 = FLOAT32.
+ */
+enum DataType {
+    // 32 bit float
+    FLOAT32 = 0;
+    // 32 bit integer
+    INT32 = 1;
+    // 64 bit float
+    FLOAT64 = 2;
+    // 8 bit integer
+    UINT8 = 3;
+}
+
+/*
+ * User datastructure
+ */
+message Users {
+    // Users Face Detect Result
+    BoundingBox face = 1;
+    // Users Facial Landmarks Result
+    Data landmarks = 2;
+    // Users Gaze Result
+    Gaze gaze = 3;
+    // Users Head Result
+    Head head = 4;
+    // Users Emotion Result
+    Emotion emotion = 5;
+}
+
+/*
+ * Bounding box datastructure expressed as (x,y) coordinate for top left and
+ * (w,h) for width and height with (x+w, y+h) as bottom right coordinate.
+ */
+message BoundingBox {
+    // Top left x-coordinate
+    int32 x = 1;
+    // Top left y-coordinate
+    int32 y = 2;
+
+    // Width such that bottom right x-coordinate = x + w
+    int32 w = 3;
+    // Height such that bottom right y-coordinate = y + h
+    int32 h = 4;
+}
+
+/*
+ * Gaze datastructure to be returned when there is GazeRequest.
+ */
+message Gaze {
+    // x-coordinate of the gaze point in camera space (millimeter)
+    double x     = 1;
+    // y-coordinate of the gaze point in camera space (millimeter)
+    double y     = 2;
+    // z-coordinate of the gaze point in camera space (millimeter)
+    double z     = 3;
+    // Horizontal angle of the gaze point in camera space (radians)
+    double theta = 4;
+    // Vertical angle of the gaze point in camera space (radians)
+    double phi   = 5;
+}
+
+/*
+ * BodyPose datastructure to be returned when there is BodyposeRequest.
+ */
+ message BodyPose {
+    repeated Joint joints = 1;
+
+    /*
+     * Joint object containing location descriptor and x,y coordinate.
+     */
+    message Joint {
+        JointDescriptor descriptor = 1;
+        int32 x = 2;
+        int32 y = 3;
+    }
+
+    /*
+     * Descriptors for Joints. Default is None.
+     */
+    enum JointDescriptor {
+        NONE = 0;
+        NOSE = 1;
+        NECK = 2;
+        RIGHT_SHOULDER = 3;
+        RIGHT_ELBOW = 4;
+        RIGHT_WRIST = 5;
+        LEFT_SHOULDER = 6;
+        LEFT_ELBOW = 7;
+        LEFT_WRIST = 8;
+        RIGHT_HIP = 9;
+        RIGHT_KNEE = 10;
+        RIGHT_ANKLE = 11;
+        LEFT_HIP = 12;
+        LEFT_KNEE = 13;
+        LEFT_ANKLE = 14;
+        RIGHT_EYE = 15;
+        LEFT_EYE = 16;
+        RIGHT_EAR = 17;
+        LEFT_EAR = 18;
+    }
+}
+
+/*
+ * Emotion datastructure to be returned when there is EmotionRequest.
+ */
+message Emotion {
+    BoundingBox bbox = 1;
+    EmotionDescriptor emotion = 2;
+
+    enum EmotionDescriptor {
+        NONE = 0;
+        NEUTRAL = 1;
+        HAPPY = 2;
+        SURPRISE = 3;
+        DISGUST = 4;
+        SCREAM = 5;
+    }
+}
+
+/*
+ * Head datastructure to be returned when there is Headpose.
+ */
+message Head {
+    // x-coordinate of the head center point in camera space (millimeter)
+    double x = 1;
+    // y-coordinate of the head center point in camera space (millimeter)
+    double y = 2;
+    // z-coordinate of the head center point in camera space (millimeter)
+    double z = 3;
+    // Pitch angle of the head center point in camera space (degrees)
+    double pitch = 4;
+    // Yaw angle of the head center point in camera space (degrees)
+    double yaw   = 5;
+    // Roll angle of the head center point in camera space (degrees)
+    double roll   = 6;
+
+}

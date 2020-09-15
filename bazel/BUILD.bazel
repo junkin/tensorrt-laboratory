@@ -1,0 +1,9 @@
+exports_files(
+    glob(["*.bzl"]),
+    visibility = ["//visibility:public"],
+)
+
+exports_files(
+    glob(["*.BUILD"]),
+    visibility = ["//visibility:public"],
+)
