@@ -83,3 +83,4 @@ target_link_libraries(speech_squad.x
 )
 
 add_subdirectory(tests)
+add_subdirectory(squad_perf_client)

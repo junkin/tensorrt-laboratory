@@ -3,7 +3,7 @@
 FROM nvcr.io/nvidian/tensorrt:20.06-py3
 
 RUN apt update
-RUN apt install -y clang-format libssl-dev openssl libz-dev software-properties-common
+RUN apt install -y clang-format libssl-dev openssl libz-dev software-properties-common rapidjson-dev libasound2-dev
 
 # remove base cmake
 RUN apt remove --purge -y cmake
