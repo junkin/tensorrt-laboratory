@@ -39,4 +39,4 @@ WORKDIR /work
 
 COPY . .
 
-RUN mkdir build && cd build && cmake .. && make -j
+RUN mkdir build && cd build && cmake .. && make -j$(nproc)
