@@ -55,8 +55,6 @@ endif()
 
 #add_subdirectory(trtis)
 
-add_subdirectory(jarvis)
-
 # install
 
 # include(CMakePackageConfigHelpers)
