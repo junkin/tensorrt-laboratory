@@ -164,7 +164,7 @@ ExternalProject_Add(cnpy
 # =========
 ExternalProject_Add(grpc-repo
   GIT_REPOSITORY "https://github.com/grpc/grpc.git"
-  GIT_TAG "v1.16.1"
+  GIT_TAG "v1.26.0"
   GIT_SUBMODULES "third_party/cares/cares" "third_party/protobuf"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""

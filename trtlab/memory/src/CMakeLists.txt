@@ -166,7 +166,7 @@ write_basic_package_version_file(${version_file}
                                  VERSION ${TRTLAB_MEMORY_VERSION}
                                  COMPATIBILITY AnyNewerVersion)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp DESTINATION ${TRTLAB_MEMORY_INC_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config_impl.h DESTINATION ${TRTLAB_MEMORY_INC_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/container_node_sizes_impl.hpp DESTINATION ${TRTLAB_MEMORY_INC_INSTALL_DIR}/foonathan/memory/detail)
 install(FILES ${header}                                   DESTINATION ${TRTLAB_MEMORY_INC_INSTALL_DIR}/foonathan/memory)
 install(FILES ${detail_header}                            DESTINATION ${TRTLAB_MEMORY_INC_INSTALL_DIR}/foonathan/memory/detail)
