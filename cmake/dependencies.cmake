@@ -46,7 +46,7 @@ set (BUILD_ROOT ${CMAKE_CURRENT_BINARY_DIR}/Dependencies/Build)
 # - Use numa=on to ensure the numa component of fiber gets built
 set(BOOST_COMPONENTS "context,fiber,filesystem")
 ExternalProject_Add (boost
-  URL https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+  URL https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.gz
   URL_HASH SHA256=c66e88d5786f2ca4dbebb14e06b566fb642a1a6947ad8cc9091f9f445134143f
   CONFIGURE_COMMAND ./bootstrap.sh --prefix=${INSTALL_ROOT} --with-libraries=${BOOST_COMPONENTS} numa=on
   BUILD_COMMAND ./b2 link=static cxxflags=-fPIC cflags=-fPIC cxxflags="-std=c++14" numa=on 
