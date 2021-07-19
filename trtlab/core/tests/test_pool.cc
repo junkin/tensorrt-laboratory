@@ -145,47 +145,6 @@ TEST_F(TestPool, PopOnReturn)
     ASSERT_EQ(1, p1->Size());
 }
 
-TEST_F(TestPool, PopOnReturnWithCapture)
-{
-    auto foo = std::string("Foo");
-    auto bar = std::string("Bar");
-
-    auto obj = p1->Pop([](Object& obj) { obj.Reset(); });
-    ASSERT_TRUE(obj);
-    ASSERT_EQ(foo, obj->GetName());
-    obj->SetName(bar);
-    ASSERT_EQ(0, p1->Size());
-    ASSERT_EQ(1, obj.use_count());
-
-    // Capture obj in onReturn lambda
-    auto from_p2_0 = p2->Pop([obj](Object& obj) {});
-    ASSERT_EQ(2, obj.use_count());
-
-    // Capture obj again a second onReturn lambda
-    auto from_p2_1 = p2->Pop([obj](Object& obj) {});
-    ASSERT_EQ(3, obj.use_count());
-
-    // Free one of the resources that captured obj
-    from_p2_0.reset();
-    ASSERT_EQ(0, p1->Size());
-    ASSERT_EQ(2, obj.use_count());
-    ASSERT_EQ(bar, obj->GetName());
-
-    // Free the original - it's still captured by from_p2_1
-    obj.reset();
-    ASSERT_EQ(0, p1->Size());
-
-    // Free the last holder of obj
-    from_p2_1.reset();
-    ASSERT_EQ(1, p1->Size());
-
-    {
-        // Ensure the obj onReturn was called
-        auto scoped = p1->Pop();
-        ASSERT_EQ(foo, scoped->GetName());
-    }
-}
-
 TEST_F(TestPool, PopWithoutReturn)
 {
     ASSERT_EQ(1, p1->Size());
